@@ -1,0 +1,48 @@
+---
+title: "wave-eval testing"
+author: "Henry Nomeland"
+date: "2024-03-12"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+```
+
+```{r}
+library(tidyverse)
+test_df = read.csv('C:/Users/nomeland/Documents/wave_eval/results/test-extraction.csv')
+test_df["id"] = "test"
+test_df["speaker"] = as.numeric(rownames(test_df))
+base_df = read.csv('C:/Users/nomeland/Documents/wave_eval/results/base-extraction.csv')
+base_df["id"] = "base"
+base_df["speaker"] = as.numeric(rownames(base_df))
+main_df = bind_rows(test_df, base_df)
+```
+
+```{r}
+features = colnames(test_df)[1:(length(test_df)-2)]
+comp_df = data.frame(matrix(vector(), length(test_df$id), length(test_df)-2, dimnames=list(c(), features)))
+for (feature in features) {
+  comp_df[feature] = test_df[feature] - base_df[feature]
+}
+```
+
+```{r}
+main_df |> 
+  ggplot(aes(x=f0_median, fill = id, color = id)) +
+  geom_density(linewidth = 1, alpha = 0.6) +
+  theme_minimal() +
+  labs(y = "Density",
+       x = "Median f0 by Trial",
+       color = "Source", 
+       fill = "Source") +
+  scale_fill_manual(values = c("lightpink", "lightblue")) +
+  theme(
+    axis.title.x = element_text(vjust = -1),
+    axis.title.y = element_text(vjust = 4)
+  )
+```
+
+
+
