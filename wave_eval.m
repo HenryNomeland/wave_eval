@@ -1,3 +1,5 @@
+%%% this function is a matlab implementation of a similar R program
+%%% generally speaking the R code is more up-to-date
 
 % main function for evaluation
 function wave_eval(base_dir, test_dir, output_dir)

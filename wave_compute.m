@@ -1,4 +1,5 @@
-% function that imports information from a dataVals matrix
+%%% function that imports information from a dataVals matrix
+%%% calculates the metrics utilized in audio analysis comparisons
 classdef wave_compute
     methods
         function output = compute(~, directory)

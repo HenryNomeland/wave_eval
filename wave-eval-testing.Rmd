@@ -44,5 +44,11 @@ main_df |>
   )
 ```
 
+```{r}
+comp_df[c("f0_median", "f0_mean", "f1_median", "f1_mean" , "f2_median", "f2_mean")] |> 
+  stack() |> 
+  ggplot(aes(x = ind, y = values)) +
+  geom_boxplot()
+```
 
 

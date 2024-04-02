@@ -1,4 +1,5 @@
-% main function for evaluation
+%%% main function for evaluation
+%%% outputs a csv that is in the correct format for analysis comparisons
 function wave_extract(input_dir, output_dir, output_filename)
 
     % import the data and output formant metrics to output dir
