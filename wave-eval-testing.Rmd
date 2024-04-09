@@ -10,31 +10,93 @@ knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
 ```
 
 ```{r}
+library(extrafont)
+loadfonts(device = "win")
+```
+
+```{r}
 library(tidyverse)
-test_df = read.csv('C:/Users/nomeland/Documents/wave_eval/results/test-extraction.csv')
+test_df = read.csv('C:/Users/nomeland/Documents/wave_eval/results/praat-extract.csv')
 test_df["id"] = "test"
 test_df["speaker"] = as.numeric(rownames(test_df))
-base_df = read.csv('C:/Users/nomeland/Documents/wave_eval/results/base-extraction.csv')
+base_df = read.csv('C:/Users/nomeland/Documents/wave_eval/results/human-extract.csv')
 base_df["id"] = "base"
 base_df["speaker"] = as.numeric(rownames(base_df))
 main_df = bind_rows(test_df, base_df)
 ```
 
 ```{r}
+fontchoice = "Calibri"
 features = colnames(test_df)[1:(length(test_df)-2)]
+main_features = c("f1_start", "f1_end", "f1_median", "f1_mean" , 
+                  "f2_start", "f2_end", "f2_median", "f2_mean")
 comp_df = data.frame(matrix(vector(), length(test_df$id), length(test_df)-2, dimnames=list(c(), features)))
 for (feature in features) {
-  comp_df[feature] = test_df[feature] - base_df[feature]
+  comp_df[feature] = base_df[feature] - test_df[feature]
 }
 ```
 
 ```{r}
-main_df |> 
-  ggplot(aes(x=f0_median, fill = id, color = id)) +
+showtext::showtext_auto()
+main_df[c("f1_start", "f1_end", "f1_median", "f1_mean", "id")] |> 
+  rownames_to_column() |> 
+  pivot_longer(cols = c("f1_start", "f1_end", "f1_median", "f1_mean")) |> 
+  ggplot(aes(x=value, fill = id, color = id)) +
+  geom_density(linewidth = 1, alpha = 0.7) +
+  theme_minimal() +
+  labs(y = "Density",
+       x = "Median F1 by Trial",
+       color = "Source", 
+       fill = "Source") +
+  scale_fill_manual(labels = c("Human", "Praat"), values = c("lightpink", "lightblue")) +
+  scale_color_manual(labels = c("Human", "Praat"), values = c("lightpink", "lightblue")) +
+  theme(
+    text = element_text(family = fontchoice),
+    plot.title = element_text(size = 14, face = "bold", vjust = 3.4, family = fontchoice),
+    axis.title.x = element_text(size = 12, vjust = -5, family = fontchoice),
+    axis.title.y = element_text(size = 12, vjust = 5, family = fontchoice),
+    strip.text.x = element_text(size = 12, color = "black", vjust = 0.5, family=fontchoice),
+    strip.background = element_rect(color = NA, fill = "white"),
+    plot.margin = unit(c(.5, .5, .5, .5), "inch")
+  ) +
+  facet_wrap(~name)
+ggsave('results//f1_default.pdf', width=15, height = 10, dpi=300)
+```
+
+```{r}
+showtext::showtext_auto()
+main_df[c("f2_start", "f2_end", "f2_median", "f2_mean", "id")] |> 
+  rownames_to_column() |> 
+  pivot_longer(cols = c("f2_start", "f2_end", "f2_median", "f2_mean")) |> 
+  ggplot(aes(x=value, fill = id, color = id)) +
+  geom_density(linewidth = 1, alpha = 0.7) +
+  theme_minimal() +
+  labs(y = "Density",
+       x = "Median F1 by Trial",
+       color = "Source", 
+       fill = "Source") +
+  scale_fill_manual(labels = c("Human", "Praat"), values = c("lightpink", "lightblue")) +
+  scale_color_manual(labels = c("Human", "Praat"), values = c("lightpink", "lightblue")) +
+  theme(
+    text = element_text(family = fontchoice),
+    plot.title = element_text(size = 14, face = "bold", vjust = 3.4, family = fontchoice),
+    axis.title.x = element_text(size = 12, vjust = -5, family = fontchoice),
+    axis.title.y = element_text(size = 12, vjust = 5, family = fontchoice),
+    strip.text.x = element_text(size = 12, color = "black", vjust = 0.5, family=fontchoice),
+    strip.background = element_rect(color = NA, fill = "white"),
+    plot.margin = unit(c(.5, .5, .5, .5), "inch")
+  ) +
+  facet_wrap(~name)
+ggsave('results//f2_default.pdf', width=15, height = 10, dpi=300)
+```
+
+```{r}
+main_df[main_features] |> 
+  ggplot(aes(x=f1_median, fill = id, color = id)) +
   geom_density(linewidth = 1, alpha = 0.6) +
   theme_minimal() +
   labs(y = "Density",
-       x = "Median f0 by Trial",
+       x = "Median F1 by Trial",
        color = "Source", 
        fill = "Source") +
   scale_fill_manual(values = c("lightpink", "lightblue")) +
@@ -45,7 +107,55 @@ main_df |>
 ```
 
 ```{r}
-comp_df[c("f0_median", "f0_mean", "f1_median", "f1_mean" , "f2_median", "f2_mean")] |> 
+main_df |> 
+  ggplot(aes(x=f1_mean, fill = id, color = id)) +
+  geom_density(linewidth = 1, alpha = 0.6) +
+  theme_minimal() +
+  labs(y = "Density",
+       x = "Mean F1 by Trial",
+       color = "Source", 
+       fill = "Source") +
+  scale_fill_manual(values = c("lightpink", "lightblue")) +
+  theme(
+    axis.title.x = element_text(vjust = -1),
+    axis.title.y = element_text(vjust = 4)
+  )
+```
+
+```{r}
+main_df |> 
+  ggplot(aes(x=f1_start, fill = id, color = id)) +
+  geom_density(linewidth = 1, alpha = 0.6) +
+  theme_minimal() +
+  labs(y = "Density",
+       x = "Start F1 by Trial",
+       color = "Source", 
+       fill = "Source") +
+  scale_fill_manual(values = c("lightpink", "lightblue")) +
+  theme(
+    axis.title.x = element_text(vjust = -1),
+    axis.title.y = element_text(vjust = 4)
+  )
+```
+
+```{r}
+main_df |> 
+  ggplot(aes(x=f1_end, fill = id, color = id)) +
+  geom_density(linewidth = 1, alpha = 0.6) +
+  theme_minimal() +
+  labs(y = "Density",
+       x = "End F1 by Trial",
+       color = "Source", 
+       fill = "Source") +
+  scale_fill_manual(values = c("lightpink", "lightblue")) +
+  theme(
+    axis.title.x = element_text(vjust = -1),
+    axis.title.y = element_text(vjust = 4)
+  )
+```
+
+```{r}
+comp_df[main_features] |> 
   stack() |> 
   ggplot(aes(x = ind, y = values)) +
   geom_boxplot()
