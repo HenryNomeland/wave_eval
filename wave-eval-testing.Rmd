@@ -30,6 +30,10 @@ fontchoice = "Calibri"
 features = colnames(test_df)[1:(length(test_df)-2)]
 main_features = c("f1_start", "f1_end", "f1_median", "f1_mean" , 
                   "f2_start", "f2_end", "f2_median", "f2_mean")
+f1_features = c('f1_0_25', 'f1_25_50', 'f1_50_75', 'f1_75_100', 
+                'f1_5_20', 'f1_20_40', 'f1_40_60', 'f1_60_80')
+f2_features = c('f2_0_25', 'f2_25_50', 'f2_50_75', 'f2_75_100', 
+                'f2_5_20', 'f2_20_40', 'f2_40_60', 'f2_60_80')
 comp_df = data.frame(matrix(vector(), length(test_df$id), length(test_df)-2, dimnames=list(c(), features)))
 for (feature in features) {
   comp_df[feature] = base_df[feature] - test_df[feature]
@@ -41,11 +45,12 @@ showtext::showtext_auto()
 main_df[c("f1_start", "f1_end", "f1_median", "f1_mean", "id")] |> 
   rownames_to_column() |> 
   pivot_longer(cols = c("f1_start", "f1_end", "f1_median", "f1_mean")) |> 
+  mutate(name = factor(name, levels = c("f1_start", "f1_end", "f1_median", "f1_mean"))) |> 
   ggplot(aes(x=value, fill = id, color = id)) +
   geom_density(linewidth = 1, alpha = 0.7) +
   theme_minimal() +
   labs(y = "Density",
-       x = "Median F1 by Trial",
+       x = "Frequency (Hz)",
        color = "Source", 
        fill = "Source") +
   scale_fill_manual(labels = c("Human", "Praat"), values = c("lightpink", "lightblue")) +
@@ -53,14 +58,70 @@ main_df[c("f1_start", "f1_end", "f1_median", "f1_mean", "id")] |>
   theme(
     text = element_text(family = fontchoice),
     plot.title = element_text(size = 14, face = "bold", vjust = 3.4, family = fontchoice),
-    axis.title.x = element_text(size = 12, vjust = -5, family = fontchoice),
+    axis.title.x = element_text(size = 12, vjust = -10, family = fontchoice),
     axis.title.y = element_text(size = 12, vjust = 5, family = fontchoice),
     strip.text.x = element_text(size = 12, color = "black", vjust = 0.5, family=fontchoice),
     strip.background = element_rect(color = NA, fill = "white"),
     plot.margin = unit(c(.5, .5, .5, .5), "inch")
   ) +
   facet_wrap(~name)
-ggsave('results//f1_default.pdf', width=15, height = 10, dpi=300)
+ggsave('results//density_f1a.pdf', width=15, height = 10, dpi=300)
+```
+
+```{r}
+showtext::showtext_auto()
+main_df[c('f1_0_25', 'f1_25_50', 'f1_50_75', 'f1_75_100', "id")] |> 
+  rownames_to_column() |> 
+  pivot_longer(cols = c('f1_0_25', 'f1_25_50', 'f1_50_75', 'f1_75_100')) |> 
+  mutate(name = factor(name, levels = c('f1_0_25', 'f1_25_50', 'f1_50_75', 'f1_75_100'))) |> 
+  ggplot(aes(x=value, fill = id, color = id)) +
+  geom_density(linewidth = 1, alpha = 0.7) +
+  theme_minimal() +
+  labs(y = "Density",
+       x = "Frequency (Hz)",
+       color = "Source", 
+       fill = "Source") +
+  scale_fill_manual(labels = c("Human", "Praat"), values = c("lightpink", "lightblue")) +
+  scale_color_manual(labels = c("Human", "Praat"), values = c("lightpink", "lightblue")) +
+  theme(
+    text = element_text(family = fontchoice),
+    plot.title = element_text(size = 14, face = "bold", vjust = 3.4, family = fontchoice),
+    axis.title.x = element_text(size = 12, vjust = -10, family = fontchoice),
+    axis.title.y = element_text(size = 12, vjust = 5, family = fontchoice),
+    strip.text.x = element_text(size = 12, color = "black", vjust = 0.5, family=fontchoice),
+    strip.background = element_rect(color = NA, fill = "white"),
+    plot.margin = unit(c(.5, .5, .5, .5), "inch")
+  ) +
+  facet_wrap(~name)
+ggsave('results//density_f1b.pdf', width=15, height = 10, dpi=300)
+```
+
+```{r}
+showtext::showtext_auto()
+main_df[c('f1_5_20', 'f1_20_40', 'f1_40_60', 'f1_60_80', "id")] |> 
+  rownames_to_column() |> 
+  pivot_longer(cols = c('f1_5_20', 'f1_20_40', 'f1_40_60', 'f1_60_80')) |> 
+  mutate(name = factor(name, levels = c('f1_5_20', 'f1_20_40', 'f1_40_60', 'f1_60_80'))) |> 
+  ggplot(aes(x=value, fill = id, color = id)) +
+  geom_density(linewidth = 1, alpha = 0.7) +
+  theme_minimal() +
+  labs(y = "Density",
+       x = "Frequency (Hz)",
+       color = "Source", 
+       fill = "Source") +
+  scale_fill_manual(labels = c("Human", "Praat"), values = c("lightpink", "lightblue")) +
+  scale_color_manual(labels = c("Human", "Praat"), values = c("lightpink", "lightblue")) +
+  theme(
+    text = element_text(family = fontchoice),
+    plot.title = element_text(size = 14, face = "bold", vjust = 3.4, family = fontchoice),
+    axis.title.x = element_text(size = 12, vjust = -10, family = fontchoice),
+    axis.title.y = element_text(size = 12, vjust = 5, family = fontchoice),
+    strip.text.x = element_text(size = 12, color = "black", vjust = 0.5, family=fontchoice),
+    strip.background = element_rect(color = NA, fill = "white"),
+    plot.margin = unit(c(.5, .5, .5, .5), "inch")
+  ) +
+  facet_wrap(~name)
+ggsave('results//density_f1c.pdf', width=15, height = 10, dpi=300)
 ```
 
 ```{r}
@@ -72,7 +133,7 @@ main_df[c("f2_start", "f2_end", "f2_median", "f2_mean", "id")] |>
   geom_density(linewidth = 1, alpha = 0.7) +
   theme_minimal() +
   labs(y = "Density",
-       x = "Median F1 by Trial",
+       x = "Frequency (Hz)",
        color = "Source", 
        fill = "Source") +
   scale_fill_manual(labels = c("Human", "Praat"), values = c("lightpink", "lightblue")) +
@@ -80,18 +141,74 @@ main_df[c("f2_start", "f2_end", "f2_median", "f2_mean", "id")] |>
   theme(
     text = element_text(family = fontchoice),
     plot.title = element_text(size = 14, face = "bold", vjust = 3.4, family = fontchoice),
-    axis.title.x = element_text(size = 12, vjust = -5, family = fontchoice),
+    axis.title.x = element_text(size = 12, vjust = -10, family = fontchoice),
     axis.title.y = element_text(size = 12, vjust = 5, family = fontchoice),
     strip.text.x = element_text(size = 12, color = "black", vjust = 0.5, family=fontchoice),
     strip.background = element_rect(color = NA, fill = "white"),
     plot.margin = unit(c(.5, .5, .5, .5), "inch")
   ) +
   facet_wrap(~name)
-ggsave('results//f2_default.pdf', width=15, height = 10, dpi=300)
+ggsave('results//density_f2a.pdf', width=15, height = 10, dpi=300)
 ```
 
 ```{r}
-main_df[main_features] |> 
+showtext::showtext_auto()
+main_df[c('f2_0_25', 'f2_25_50', 'f2_50_75', 'f2_75_100', "id")] |> 
+  rownames_to_column() |> 
+  pivot_longer(cols = c('f2_0_25', 'f2_25_50', 'f2_50_75', 'f2_75_100')) |> 
+  mutate(name = factor(name, levels = c('f2_0_25', 'f2_25_50', 'f2_50_75', 'f2_75_100'))) |> 
+  ggplot(aes(x=value, fill = id, color = id)) +
+  geom_density(linewidth = 1, alpha = 0.7) +
+  theme_minimal() +
+  labs(y = "Density",
+       x = "Frequency (Hz)",
+       color = "Source", 
+       fill = "Source") +
+  scale_fill_manual(labels = c("Human", "Praat"), values = c("lightpink", "lightblue")) +
+  scale_color_manual(labels = c("Human", "Praat"), values = c("lightpink", "lightblue")) +
+  theme(
+    text = element_text(family = fontchoice),
+    plot.title = element_text(size = 14, face = "bold", vjust = 3.4, family = fontchoice),
+    axis.title.x = element_text(size = 12, vjust = -10, family = fontchoice),
+    axis.title.y = element_text(size = 12, vjust = 5, family = fontchoice),
+    strip.text.x = element_text(size = 12, color = "black", vjust = 0.5, family=fontchoice),
+    strip.background = element_rect(color = NA, fill = "white"),
+    plot.margin = unit(c(.5, .5, .5, .5), "inch")
+  ) +
+  facet_wrap(~name)
+ggsave('results//density_f2b.pdf', width=15, height = 10, dpi=300)
+```
+
+```{r}
+showtext::showtext_auto()
+main_df[c('f2_5_20', 'f2_20_40', 'f2_40_60', 'f2_60_80', "id")] |> 
+  rownames_to_column() |> 
+  pivot_longer(cols = c('f2_5_20', 'f2_20_40', 'f2_40_60', 'f2_60_80')) |> 
+  mutate(name = factor(name, levels = c('f2_5_20', 'f2_20_40', 'f2_40_60', 'f2_60_80'))) |> 
+  ggplot(aes(x=value, fill = id, color = id)) +
+  geom_density(linewidth = 1, alpha = 0.7) +
+  theme_minimal() +
+  labs(y = "Density",
+       x = "Frequency (Hz)",
+       color = "Source", 
+       fill = "Source") +
+  scale_fill_manual(labels = c("Human", "Praat"), values = c("lightpink", "lightblue")) +
+  scale_color_manual(labels = c("Human", "Praat"), values = c("lightpink", "lightblue")) +
+  theme(
+    text = element_text(family = fontchoice),
+    plot.title = element_text(size = 14, face = "bold", vjust = 3.4, family = fontchoice),
+    axis.title.x = element_text(size = 12, vjust = -10, family = fontchoice),
+    axis.title.y = element_text(size = 12, vjust = 5, family = fontchoice),
+    strip.text.x = element_text(size = 12, color = "black", vjust = 0.5, family=fontchoice),
+    strip.background = element_rect(color = NA, fill = "white"),
+    plot.margin = unit(c(.5, .5, .5, .5), "inch")
+  ) +
+  facet_wrap(~name)
+ggsave('results//density_f2c.pdf', width=15, height = 10, dpi=300)
+```
+
+```{r}
+main_df |> 
   ggplot(aes(x=f1_median, fill = id, color = id)) +
   geom_density(linewidth = 1, alpha = 0.6) +
   theme_minimal() +
@@ -104,61 +221,43 @@ main_df[main_features] |>
     axis.title.x = element_text(vjust = -1),
     axis.title.y = element_text(vjust = 4)
   )
+ggsave('results//density_median.pdf', width=15, height = 10, dpi=300)
 ```
 
-```{r}
-main_df |> 
-  ggplot(aes(x=f1_mean, fill = id, color = id)) +
-  geom_density(linewidth = 1, alpha = 0.6) +
-  theme_minimal() +
-  labs(y = "Density",
-       x = "Mean F1 by Trial",
-       color = "Source", 
-       fill = "Source") +
-  scale_fill_manual(values = c("lightpink", "lightblue")) +
-  theme(
-    axis.title.x = element_text(vjust = -1),
-    axis.title.y = element_text(vjust = 4)
-  )
-```
-
-```{r}
-main_df |> 
-  ggplot(aes(x=f1_start, fill = id, color = id)) +
-  geom_density(linewidth = 1, alpha = 0.6) +
-  theme_minimal() +
-  labs(y = "Density",
-       x = "Start F1 by Trial",
-       color = "Source", 
-       fill = "Source") +
-  scale_fill_manual(values = c("lightpink", "lightblue")) +
-  theme(
-    axis.title.x = element_text(vjust = -1),
-    axis.title.y = element_text(vjust = 4)
-  )
-```
-
-```{r}
-main_df |> 
-  ggplot(aes(x=f1_end, fill = id, color = id)) +
-  geom_density(linewidth = 1, alpha = 0.6) +
-  theme_minimal() +
-  labs(y = "Density",
-       x = "End F1 by Trial",
-       color = "Source", 
-       fill = "Source") +
-  scale_fill_manual(values = c("lightpink", "lightblue")) +
-  theme(
-    axis.title.x = element_text(vjust = -1),
-    axis.title.y = element_text(vjust = 4)
-  )
-```
 
 ```{r}
 comp_df[main_features] |> 
   stack() |> 
   ggplot(aes(x = ind, y = values)) +
-  geom_boxplot()
+  geom_boxplot() +
+  labs(
+    x = "",
+    y = "Frequency (Hz)"
+  )
+ggsave('results//box_default.pdf', dpi=300)
 ```
 
+```{r}
+comp_df[f1_features] |> 
+  stack() |> 
+  ggplot(aes(x = ind, y = values)) +
+  geom_boxplot() +
+  labs(
+    x = "",
+    y = "Frequency (Hz)"
+  )
+ggsave('results//box_f1.pdf', dpi=300)
+```
+
+```{r}
+comp_df[f2_features] |> 
+  stack() |> 
+  ggplot(aes(x = ind, y = values)) +
+  geom_boxplot() +
+  labs(
+    x = "",
+    y = "Frequency (Hz)"
+  )
+ggsave('results//box_f2.pdf', dpi=300)
+```
 
