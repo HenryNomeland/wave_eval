@@ -16,7 +16,7 @@ loadfonts(device = "win")
 
 ```{r}
 library(tidyverse)
-test_df = read.csv('C:/Users/nomeland/Documents/wave_eval/results/praat-extract.csv')
+test_df = read.csv('C:/Users/nomeland/Documents/wave_eval/results/ft-extract.csv')
 test_df["id"] = "test"
 test_df["speaker"] = as.numeric(rownames(test_df))
 base_df = read.csv('C:/Users/nomeland/Documents/wave_eval/results/human-extract.csv')

@@ -7,3 +7,6 @@
 /praat-results
 /fast-track-results
 /datavals-storage
+*.RData
+*.Rhistory
+*.mat

@@ -2,5 +2,5 @@
 
 function wave_plotting(compfile)
     comps = importdata(fullfile('results', compfile));
-    ksdensity(comps.f1_mean_diff_dist)
+    ksdensity(comps.f0_mean_diff_dist)
 end
